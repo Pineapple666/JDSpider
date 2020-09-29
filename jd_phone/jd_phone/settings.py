@@ -64,7 +64,7 @@ DOWNLOADER_MIDDLEWARES = {
 ITEM_PIPELINES = {
     # 'jd_phone.pipelines.JsonWithEncodingPipeline': 300,
     'jd_phone.pipelines.MongoPipeline': 301,
-    'jd_phone.pipelines.MysqlPipeline': 302,
+    # 'jd_phone.pipelines.MysqlPipeline': 302,
 }
 
 # MongoDB 配置

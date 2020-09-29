@@ -1,3 +1,4 @@
+from pyquery.pyquery import PyQuery as pq
 from jd_phone.items import Jd_phoneItem
 from scrapy import Request, Spider
 from urllib.parse import quote
@@ -101,19 +102,26 @@ class PhoneSpider(Spider):
                 yield Request(url=response.url, callback=self.parseDetail, meta=response.meta, dont_filter=True)
             else:
                 pass
-        # 获取 商品型号
         else:
+            # 获取 商品型号
             model = response.css('.item.ellipsis::text').extract_first('')
-            if not model:
-                model = response.css('.parameter2.p-parameter-list li::attr(title)').extract_first('')
             # 获取 商品的店名
             shop_name = response.css('.J-hove-wrap.EDropdown.fr .item .name a::text').extract_first('')
-            if not shop_name:
-                shop_name = response.css(
-                    '.item.hide.J-im-item .J-im-btn .im.customer-service::attr(data-seller)').extract_first('')
+            # 获取 手机配置
+            doc=pq(response.text)
+            config=doc('ul.parameter2.p-parameter-list').text()
+            product_name = re.search('商品名称：(.*?)\n', config).group(1)
+            product_weight = re.search('商品毛重：(.*?)\n', config).group(1)
+            cpu_model = re.search('CPU型号：(.*?)\n', config).group(1)
+            ram = re.search('运行内存：(.*?)\n', config).group(1)
+            memory = re.search('机身存储：(.*?)\n', config).group(1)
+            resolution = re.search('分辨率：(.*?)\n', config).group(1)
+            rear_pixels = re.search('后摄主摄像素：(.*?)\n', config).group(1)
+            front_pixels = re.search('前摄主摄像素：(.*?)\n', config).group(1)
+            screen_size = re.search('主屏幕尺寸（英寸）：(.*?)\n', config).group(1)
+            cameras_number = re.search('摄像头数量：(.*?)\n', config).group(1)
             # 获取 商品url
             url = response.url
-
             # 获取 meta中的值
             comment_count = response.meta['comment_count']
             good_count = response.meta['good_count']
@@ -138,4 +146,15 @@ class PhoneSpider(Spider):
             item['general_count'] = general_count
             item['poor_count'] = poor_count
             item['show_count'] = show_count
+
+            item['product_name'] = product_name
+            item['product_weight'] = product_weight
+            item['cpu_model'] = cpu_model
+            item['ram'] = ram
+            item['memory'] = memory
+            item['resolution'] = resolution
+            item['rear_pixels'] = rear_pixels
+            item['front_pixels'] = front_pixels
+            item['screen_size'] = screen_size
+            item['cameras_number'] = cameras_number
             yield item
