@@ -14,6 +14,8 @@ class PhoneSpider(Spider):
 
     # 需要爬取的 类目
     keyword = quote('手机')
+    # 需要爬取的最大页数
+    max_page = 5
     # 商品列表url
     start_url = 'https://search.jd.com/s_new.php?keyword={keyword}&page={page}&s={s}'
     # 商品评论页面(JSON)url
@@ -49,7 +51,7 @@ class PhoneSpider(Spider):
         # page 代表半页，即30个商品
         page = response.meta['page'] + 1
         s = response.meta['s'] + 25
-        if page < 21:
+        if page < self.max_page * 2 + 1:
             # 回调解析后30个商品
             yield Request(url=self.start_url.format(keyword=self.keyword, page=page, s=s), callback=self.parse,
                           meta={'page': page, 's': s})

@@ -28,6 +28,13 @@ class HeadersMiddleware:
         :param request:
         :return:
         """
+        # 定制商品列表请求头
+        if 'search.jd.com' in request.url:
+            request.headers.update({
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36',
+                'Referer': 'https://search.jd.com/Search?keyword=%E6%89%8B%E6%9C%BA&page=1&s=1'
+            })
+        # 定制商品详情请求头
         if 'item.jd.com' in request.url:
             request.headers[
                 'User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
